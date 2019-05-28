@@ -1,7 +1,13 @@
 package meta
 
-type ConstructionSuite struct {
-	objectConstructor   ObjectConstructor
-	fieldConstructor    FieldConstructor
-	instanceConstructor InstanceConstructor
+type ObjectConstructor func() Object
+type FieldConstructor func(name string) Field
+type PropertyConstructor func() Property
+type InstanceConstructor func(object Object) Instance
+
+type ConstructionSuite interface {
+	ObjectConstructor() ObjectConstructor
+	FieldConstructor() FieldConstructor
+	InstanceConstructor() InstanceConstructor
+	PropertyConstructor() PropertyConstructor
 }

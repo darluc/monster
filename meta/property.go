@@ -1,6 +1,23 @@
 package meta
 
-type PropertyName string
+import "reflect"
+
+type PropertyDefinition struct {
+	name     string
+	dataType reflect.Type
+}
+
+func (p *PropertyDefinition) Name() string {
+	return p.name
+}
+
+func (p *PropertyDefinition) DataType() reflect.Type {
+	return p.dataType
+}
+
+func NewPropertyDefinition(name string, t reflect.Type) *PropertyDefinition {
+	return &PropertyDefinition{name: name, dataType: t}
+}
 
 // PropertyHolder have a batch of properties.
 type PropertyHolder interface {
@@ -11,6 +28,7 @@ type PropertyHolder interface {
 type Property interface {
 	// Holder return the owner who has the property
 	Holder() PropertyHolder
-	Name() PropertyName
+	SetHolder(holder PropertyHolder)
+	Definition() *PropertyDefinition
 	Value() interface{}
 }

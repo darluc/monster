@@ -3,7 +3,6 @@ package mysql
 import (
 	"context"
 	"theMoon/domain"
-	"theMoon/instance"
 	"theMoon/meta"
 	"theMoon/util"
 )
@@ -16,7 +15,7 @@ func (*StoreExec) Open() error {
 	//initialize mysql datatype saver
 }
 
-func (store *StoreExec) Next(ctx context.Context, instances *instance.Batch) error {
+func (store *StoreExec) Next(ctx context.Context, instances *meta.Batch) error {
 	for _, ins := range instances.Items {
 		store.ds.SaveObject(ins.MetaObject())
 		store.ds.SaveInstance(ins)
@@ -32,11 +31,11 @@ func (*StoreExec) Close() error {
 type DataSaver struct {
 }
 
-func (*DataSaver) SaveInstance(instance instance.Instance) *util.Progress {
+func (*DataSaver) SaveInstance(instance meta.Instance) *util.Progress {
 	panic("implement me")
 }
 
-func (*DataSaver) RemoveInstance(instance instance.Instance) *util.Progress {
+func (*DataSaver) RemoveInstance(instance meta.Instance) *util.Progress {
 	panic("implement me")
 }
 
