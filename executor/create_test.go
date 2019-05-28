@@ -23,7 +23,7 @@ func TestCreateExec(t *testing.T) {
 	var err error
 	err = exec.Open()
 	instances := meta.NewBatch()
-	instanceCount := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(10)
+	instanceCount := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(10) + 1
 	if err != nil {
 		for i := 0; i < instanceCount; i++ {
 			err = exec.Next(context.Background(), instances)
