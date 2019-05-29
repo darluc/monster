@@ -5,21 +5,22 @@ import (
 	"math/rand"
 	"testing"
 	"theMoon/meta"
-	"theMoon/meta/datatype"
+	"theMoon/system/datatype"
+	"theMoon/system/implement/base"
 	"time"
 )
 
 func TestCreateExec(t *testing.T) {
-	f1 := meta.NewBaseField("name", datatype.StringType)
-	f2 := meta.NewBaseField("code", datatype.StringType)
-	f3 := meta.NewBaseField("count", datatype.NumberType)
-	obj := meta.NewBaseObject()
+	f1 := base.NewBaseField("name", datatype.StringType)
+	f2 := base.NewBaseField("code", datatype.StringType)
+	f3 := base.NewBaseField("count", datatype.NumberType)
+	obj := base.NewBaseObject()
 	obj.AddField(f1)
 	obj.AddField(f2)
 	obj.AddField(f3)
 
 	data := map[string]interface{}{"name": "bruce", "code": "ZVZ", "count": 3}
-	exec := CreateExec{InstanceCreator: meta.NewBaseInstance, MetaObject: obj, Data: data}
+	exec := CreateExec{InstanceCreator: base.NewBaseInstance, MetaObject: obj, Data: data}
 	var err error
 	err = exec.Open()
 	instances := meta.NewBatch()
