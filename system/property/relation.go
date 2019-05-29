@@ -20,11 +20,6 @@ const (
 )
 
 var (
-	RelationRatio *meta.PropertyDefinition
-	RelationType  *meta.PropertyDefinition
+	RelationRatio = meta.NewPropertyDefinition("RelationType", reflect.TypeOf(TypeMasterSlave))
+	RelationType  = meta.NewPropertyDefinition("RelationRatio", reflect.TypeOf(OneToOne))
 )
-
-func init() {
-	RelationType = meta.NewPropertyDefinition("RelationType", reflect.TypeOf(TypeMasterSlave))
-	RelationRatio = meta.NewPropertyDefinition("RelationRatio", reflect.TypeOf(OneToOne))
-}

@@ -33,6 +33,13 @@ func (ins *Instance) FieldValue(field meta.Field) interface{} {
 	return nil
 }
 
+func (ins *Instance) FieldValueByName(fieldName string) interface{} {
+	if fld := ins.MetaObject().Field(fieldName); fld != nil {
+		return ins.FieldValue(fld)
+	}
+	return nil
+}
+
 func NewBaseInstance(object meta.Object) meta.Instance {
 	if object == nil {
 		panic(errors.New("cannot create instance from a nil object"))

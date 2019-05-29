@@ -28,7 +28,7 @@ func (field *Field) Properties() []meta.Property {
 	return field.properties
 }
 
-func (field *Field) addProperty(property meta.Property) {
+func (field *Field) AddProperty(property meta.Property) {
 	field.opMutex.Lock()
 	defer field.opMutex.Unlock()
 	field.properties = append(field.properties, property)

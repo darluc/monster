@@ -22,6 +22,7 @@ func NewPropertyDefinition(name string, t reflect.Type) *PropertyDefinition {
 // PropertyHolder have a batch of properties.
 type PropertyHolder interface {
 	Properties() []Property
+	AddProperty(property Property)
 }
 
 // Property is often used by executors.
