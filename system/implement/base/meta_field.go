@@ -6,10 +6,11 @@ import (
 )
 
 type Field struct {
-	name       string
-	dataType   meta.DataType
-	properties []meta.Property
-	opMutex    sync.Mutex
+	name     string
+	dataType meta.DataType
+	opMutex  sync.Mutex
+
+	*meta.BasePropertyHolder
 }
 
 func (field *Field) Name() string {
@@ -24,18 +25,7 @@ func (field *Field) SetName(name string) {
 	field.name = name
 }
 
-func (field *Field) Properties() []meta.Property {
-	return field.properties
-}
-
-func (field *Field) AddProperty(property meta.Property) {
-	field.opMutex.Lock()
-	defer field.opMutex.Unlock()
-	field.properties = append(field.properties, property)
-}
-
 func NewBaseField(name string, t meta.DataType) meta.Field {
-	b := &Field{name: name, dataType: t}
-	b.properties = make([]meta.Property, 0)
+	b := &Field{name: name, dataType: t, BasePropertyHolder: meta.NewProperties()}
 	return b
 }

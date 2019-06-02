@@ -2,10 +2,13 @@ package timed
 
 import (
 	"fmt"
-	dll "github.com/emirpasic/gods/lists/doublylinkedlist"
+	sll "github.com/emirpasic/gods/lists/singlylinkedlist"
+	"github.com/emirpasic/gods/sets/treeset"
 	"theMoon/meta"
 	"theMoon/system/datatype"
 	"theMoon/system/implement/base"
+	"theMoon/system/property"
+	"theMoon/util"
 )
 
 const (
@@ -16,59 +19,91 @@ const (
 type Instance struct {
 	*base.Instance
 
-	timeline *dll.List // list sorted by start date
-	entries  *dll.List // list sorted by entry time
+	points      *treeset.Set             // hashSet saved time point
+	timedFields map[meta.Field]*sll.List // field : SinglyLinkedList<TimedValue>，value is ordered by date asc
 }
 
-func (ins *Instance) Update(data map[string]interface{}) {
-
+func (ins *Instance) FieldValue(fld meta.Field) (val interface{}) {
+	if fld.PropertyValue(property.TimelineEnabled) == true {
+		val = ins.TimedFieldValue(fld, util.GetCurrentDate(), 0)
+	} else {
+		val = ins.Instance.FieldValue(fld)
+	}
+	return
 }
 
-func (ins *Instance) Correct(data map[string]interface{}) {
+// TimedFieldValue reads out value of timed field with the effective date and specified entry time.
+// If entryTime is zero, just use the first one has the same effective date.
+func (ins *Instance) TimedFieldValue(fld meta.Field, asOfDate datatype.EffectiveDate, entryTime uint) (val interface{}) {
+	if fld.PropertyValue(property.TimelineEnabled) != true {
+		panic("cannot read common field with TimedFieldValue method")
+	}
 
-}
-
-func (ins *Instance) Remove(startDate datatype.EffectiveDate, entryTime uint) {
-
-}
-
-func (ins *Instance) HistoricalUpdate() {
-
-}
-
-func (ins *Instance) HistoricalCorrect() {
-
-}
-
-func (ins *Instance) HistoricalRemove() {
-
-}
-
-func (ins *Instance) SliceAt(date datatype.EffectiveDate, entryTime uint) (slice *Instance) {
-	iter := ins.timeline.Iterator()
-	for iter.Next() {
-		snapshot, ok := iter.Value().(*Instance)
-		if !ok {
-			panic("snapshot is not a timed instance")
-		}
-		startDate := snapshot.FieldValueByName(FieldEffectiveStartDate).(datatype.EffectiveDate)
-		endDate := snapshot.FieldValueByName(FieldEffectiveEndDate).(datatype.EffectiveDate)
-		if startDate <= date && endDate >= date {
-			if startDate == endDate && entryTime > 0 { // search in entries
-				entryIter := snapshot.entries.Iterator()
-				for entryIter.Next() {
-					slice = entryIter.Value().(*Instance)
-					if slice.FieldValueByName(FieldEffectiveEntryTime) == entryTime {
-						return slice
-					}
-				}
-				return nil
+	if list, ok := ins.timedFields[fld]; ok {
+		iter := list.Iterator()
+		for iter.Next() {
+			current := iter.Value().(*timedValue)
+			if current.Date == asOfDate && (current.EntryTime == entryTime || entryTime == 0) {
+				return current.Value
 			}
-			slice = snapshot
-			break
 		}
 	}
-	return slice
+	return
+}
+
+func (ins *Instance) SetFieldValue(fld meta.Field, val interface{}) {
+	if fld.PropertyValue(property.TimelineEnabled) == true {
+		panic("timed field cannot be updated by Instance.SetFieldValue")
+	} else {
+		ins.Instance.SetFieldValue(fld, val)
+	}
+}
+
+// SetTimedFieldValue use to set value for timed field, and maintain the list of values
+// which are ordered by [date asc, entry time desc]
+func (ins *Instance) SetTimedFieldValue(fld meta.Field, val interface{}, startDate datatype.EffectiveDate, entryTime uint) {
+	if fld.PropertyValue(property.TimelineEnabled) != true {
+		panic("common field cannot be updated by Instance.SetTimedFieldValue")
+	}
+
+	list, ok := ins.timedFields[fld]
+	if !ok {
+		list = sll.New()
+		ins.timedFields[fld] = list
+	}
+
+	if entryTime == 0 {
+		iter := list.Iterator()
+		for iter.Next() {
+			if iter.Value().(*timedValue).Date == startDate { // find the first value which has the same effective date
+				entryTime = iter.Value().(*timedValue).EntryTime + 1 // auto increase entry time
+				break
+			} else if iter.Value().(*timedValue).Date < startDate {
+				break
+			}
+		}
+	}
+	list.Add(&timedValue{Date: startDate, EntryTime: entryTime, Value: val})
+
+	// sort by date & entry time
+	list.Sort(func(a, b interface{}) int {
+		aVal := a.(*timedValue)
+		bVal := b.(*timedValue)
+		if aVal.Date == bVal.Date {
+			if aVal.EntryTime > bVal.EntryTime {
+				return 1
+			} else {
+				return -1
+			}
+		} else if aVal.Date > bVal.Date {
+			return 1
+		} else {
+			return -1
+		}
+	})
+
+	// remember date point
+	ins.points.Add(startDate)
 }
 
 func NewTimedInstance(obj meta.Object) meta.Instance {
@@ -90,9 +125,7 @@ func NewTimedInstance(obj meta.Object) meta.Instance {
 		baseInstance.SetFieldValue(endDateField, defaultEndDate)
 
 		// initialize timeline list
-		timeline := dll.New()
-		ins := &Instance{timeline: timeline, Instance: baseInstance.(*base.Instance), entries: dll.New()}
-		timeline.Add(ins) // add self into snapshot list
+		ins := &Instance{Instance: baseInstance.(*base.Instance), points: treeset.NewWithIntComparator()}
 		return ins
 	}
 	// will panic if meta object is not timeline supported

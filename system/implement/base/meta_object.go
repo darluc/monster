@@ -7,9 +7,9 @@ import (
 
 // BaseObject is a simple implementation of Object
 type Object struct {
-	name       string
-	fields     []meta.Field
-	properties []meta.Property
+	name   string
+	fields []meta.Field
+	*meta.BasePropertyHolder
 
 	opMutex sync.Mutex
 }
@@ -46,20 +46,9 @@ func (obj *Object) AddField(field meta.Field) {
 	obj.fields = append(obj.fields, field)
 }
 
-func (obj *Object) Properties() []meta.Property {
-	return obj.properties
-}
-
-func (obj *Object) AddProperty(property meta.Property) {
-	obj.opMutex.Lock()
-	defer obj.opMutex.Unlock()
-	property.SetHolder(obj)
-	obj.properties = append(obj.properties, property)
-}
-
 func NewBaseObject() meta.Object {
 	b := &Object{}
-	b.properties = make([]meta.Property, 0)
+	b.BasePropertyHolder = meta.NewProperties()
 	b.fields = make([]meta.Field, 0)
 	return b
 }

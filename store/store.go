@@ -2,7 +2,6 @@ package store
 
 import (
 	"theMoon/domain"
-	"theMoon/instance"
 	"theMoon/meta"
 	"theMoon/util"
 )
@@ -14,8 +13,8 @@ type ObjectSaver interface {
 
 // InstanceSaver can save single instance for persistence
 type InstanceSaver interface {
-	SaveInstance(instance instance.Instance) *util.Progress
-	RemoveInstance(instance instance.Instance) *util.Progress
+	SaveInstance(instance meta.Instance) *util.Progress
+	RemoveInstance(instance meta.Instance) *util.Progress
 }
 
 // DomainSaver can save all objects & instances in the specified domain
