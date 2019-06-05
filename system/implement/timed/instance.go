@@ -43,8 +43,8 @@ func (ins *Instance) TimedFieldValue(fld meta.Field, asOfDate datatype.Effective
 		iter := list.Iterator()
 		for iter.Next() {
 			current := iter.Value().(*timedValue)
-			if current.Date == asOfDate && (current.EntryTime == entryTime || entryTime == 0) {
-				return current.Value
+			if current.Date <= asOfDate && (current.EntryTime == entryTime || entryTime == 0) {
+				val = current.Value
 			}
 		}
 	}
@@ -106,8 +106,17 @@ func (ins *Instance) SetTimedFieldValue(fld meta.Field, val interface{}, startDa
 	ins.points.Add(startDate)
 }
 
+// SliceAt return a slice of timed instance value of all fields
+func (ins *Instance) SliceAt(asOfDate datatype.EffectiveDate) map[meta.Field]interface{} {
+	ret := make(map[meta.Field]interface{})
+	for _, fld := range ins.MetaObject().Fields() {
+		ret[fld] = ins.FieldValue(fld)
+	}
+	return ret
+}
+
 func NewTimedInstance(obj meta.Object) meta.Instance {
-	if _, ok := obj.(Object); ok {
+	if _, ok := obj.(*Object); ok {
 		baseInstance := base.NewBaseInstance(obj)
 
 		// set default start date
@@ -125,7 +134,18 @@ func NewTimedInstance(obj meta.Object) meta.Instance {
 		baseInstance.SetFieldValue(endDateField, defaultEndDate)
 
 		// initialize timeline list
-		ins := &Instance{Instance: baseInstance.(*base.Instance), points: treeset.NewWithIntComparator()}
+		pointsTreeSet := treeset.NewWith(func(a interface{}, b interface{}) int {
+			ai := a.(datatype.EffectiveDate)
+			bi := b.(datatype.EffectiveDate)
+			if ai > bi {
+				return 1
+			} else if ai < bi {
+				return -1
+			} else {
+				return 0
+			}
+		})
+		ins := &Instance{Instance: baseInstance.(*base.Instance), points: pointsTreeSet, timedFields: map[meta.Field]*sll.List{}}
 		return ins
 	}
 	// will panic if meta object is not timeline supported
