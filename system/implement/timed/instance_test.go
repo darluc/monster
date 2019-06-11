@@ -1,9 +1,9 @@
 package timed
 
 import (
+	"monster/system/datatype"
+	"monster/system/implement/base"
 	"testing"
-	"theMoon/system/datatype"
-	"theMoon/system/implement/base"
 )
 
 func TestTimeInstanceSlice(t *testing.T) {

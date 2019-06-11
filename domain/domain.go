@@ -1,9 +1,9 @@
 package domain
 
 import (
-	"theMoon/context"
-	"theMoon/instance"
-	"theMoon/meta"
+	"monster/context"
+	"monster/instance"
+	"monster/meta"
 )
 
 // Domain is a container for objects & instances

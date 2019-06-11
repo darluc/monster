@@ -1,4 +1,4 @@
-module theMoon
+module monster
 
 go 1.12
 

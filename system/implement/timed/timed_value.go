@@ -1,6 +1,6 @@
 package timed
 
-import "theMoon/system/datatype"
+import "monster/system/datatype"
 
 type timedValue struct {
 	EntryTime uint

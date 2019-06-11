@@ -1,6 +1,6 @@
 package base
 
-import "theMoon/meta"
+import "monster/meta"
 
 type Property struct {
 	holder             meta.PropertyHolder

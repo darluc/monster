@@ -1,9 +1,9 @@
 package store
 
 import (
-	"theMoon/domain"
-	"theMoon/meta"
-	"theMoon/util"
+	"monster/domain"
+	"monster/meta"
+	"monster/util"
 )
 
 // ObjectSaver can save single object for persistence

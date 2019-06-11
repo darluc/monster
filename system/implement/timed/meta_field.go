@@ -1,9 +1,9 @@
 package timed
 
 import (
-	"theMoon/meta"
-	"theMoon/system/implement/base"
-	"theMoon/system/property"
+	"monster/meta"
+	"monster/system/implement/base"
+	"monster/system/property"
 )
 
 const (

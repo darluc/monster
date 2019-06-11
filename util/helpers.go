@@ -1,7 +1,7 @@
 package util
 
 import (
-	"theMoon/system/datatype"
+	"monster/system/datatype"
 	"time"
 )
 

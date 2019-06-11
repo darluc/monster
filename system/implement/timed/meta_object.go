@@ -1,10 +1,10 @@
 package timed
 
 import (
-	"theMoon/meta"
-	"theMoon/system/datatype"
-	"theMoon/system/implement/base"
-	"theMoon/system/property"
+	"monster/meta"
+	"monster/system/datatype"
+	"monster/system/implement/base"
+	"monster/system/property"
 )
 
 type Object struct {
