@@ -34,8 +34,9 @@ func TestTimeInstanceSlice(t *testing.T) {
 	}
 
 	ins.(*Instance).SetTimedFieldValue(ageField, 28, 20181212, 0)
+	ins.(*Instance).SetTimedFieldValue(ageField, 29, 20181212, 999)
 	age = ins.(*Instance).FieldValue(ageField).(int)
-	if age == 28 {
+	if age == 29 {
 		t.Logf("current age is %d", age)
 	} else {
 		t.Errorf("failed: current age is %d", age)

@@ -45,6 +45,8 @@ func (ins *Instance) TimedFieldValue(fld meta.Field, asOfDate datatype.Effective
 			current := iter.Value().(*timedValue)
 			if current.Date <= asOfDate && (current.EntryTime == entryTime || entryTime == 0) {
 				val = current.Value
+			} else if current.Date > asOfDate {
+				break
 			}
 		}
 	}
