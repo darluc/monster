@@ -23,6 +23,11 @@ type Instance struct {
 	timedFields map[meta.Field]*sll.List // field : SinglyLinkedList<TimedValue>，value is ordered by date asc
 }
 
+// Points returns cut points of timed instance
+func (ins *Instance) Points() *treeset.Set {
+	return ins.points
+}
+
 func (ins *Instance) FieldValue(fld meta.Field) (val interface{}) {
 	if fld.PropertyValue(property.TimelineEnabled) == true {
 		val = ins.TimedFieldValue(fld, util.GetCurrentDate(), 0)

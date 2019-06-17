@@ -6,7 +6,7 @@ import (
 	"monster/meta"
 )
 
-// UpdateExec represents a update executor
+// UpdateExec is a basic executor used to update instance field's value
 type UpdateExec struct {
 	Data map[string]interface{}
 }

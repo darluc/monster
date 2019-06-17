@@ -6,37 +6,25 @@ import (
 	"monster/meta"
 )
 
+// CreateExec is a basic executor used to create instances
 type CreateExec struct {
 	InstanceCreator meta.InstanceConstructor
 	MetaObject      meta.Object
-	Data            map[string]interface{}
-
-	update *UpdateExec
 }
 
-func (e *CreateExec) Open() error {
+func (e *CreateExec) Open() (err error) {
 	if e.MetaObject == nil {
-		return errors.New("meta object is nil")
+		err = errors.New("meta object cannot be nil")
 	}
-	if e.Data != nil && len(e.Data) > 0 {
-		e.update = &UpdateExec{Data: e.Data}
-		return e.update.Open()
-	}
-	return nil
+	return
 }
 
 func (e *CreateExec) Next(ctx context.Context, instances *meta.Batch) (err error) {
 	ins := e.InstanceCreator(e.MetaObject)
 	instances.Items = append(instances.Items, ins)
-	if e.update != nil {
-		err = e.update.Next(ctx, instances)
-	}
 	return err
 }
 
 func (e *CreateExec) Close() error {
-	if e.update != nil {
-		return e.update.Close()
-	}
 	return nil
 }
