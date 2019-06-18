@@ -15,7 +15,9 @@ func (ins *Instance) SetFieldValue(field meta.Field, value interface{}) {
 	if !ins.metaObject.HasField(field) {
 		panic(fmt.Errorf("object[%s] does not have field[%s]", ins.metaObject.Name(), field.Name()))
 	}
-	ins.fields[field] = value
+	if field.Type().TypeCheck(value) {
+		ins.fields[field] = value
+	}
 }
 
 func (ins *Instance) ID() meta.Identifier {

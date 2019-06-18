@@ -1,25 +1,25 @@
 package property
 
 import (
-	"reflect"
 	"monster/meta"
+	"reflect"
 )
 
-type Type uint8
+type Type int
 
 const (
 	TypeMasterSlave Type = iota
 	TypeMasterReference
 )
 
-type Ratio uint8
+type ratio int
 
 const (
-	OneToOne Ratio = iota
+	OneToOne ratio = iota
 	OneToMany
 )
 
 var (
-	RelationRatio = meta.NewPropertyDefinition("RelationType", reflect.TypeOf(TypeMasterSlave))
-	RelationType  = meta.NewPropertyDefinition("RelationRatio", reflect.TypeOf(OneToOne))
+	RelationRatio = meta.NewPropertyDefinition("RelationRatio", reflect.TypeOf(TypeMasterSlave))
+	RelationType  = meta.NewPropertyDefinition("RelationType", reflect.TypeOf(OneToOne))
 )
