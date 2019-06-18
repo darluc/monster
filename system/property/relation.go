@@ -20,6 +20,7 @@ const (
 )
 
 var (
-	RelationRatio = meta.NewPropertyDefinition("RelationRatio", reflect.TypeOf(TypeMasterSlave))
-	RelationType  = meta.NewPropertyDefinition("RelationType", reflect.TypeOf(OneToOne))
+	RelationRatio     = meta.NewPropertyDefinition("Relation:Ratio", reflect.TypeOf(TypeMasterSlave))
+	RelationType      = meta.NewPropertyDefinition("Relation:Type", reflect.TypeOf(OneToOne))
+	RelationFieldName = meta.NewPropertyDefinition("Relation:FieldNameOfSourceObject", reflect.TypeOf(""))
 )

@@ -10,10 +10,8 @@ var EffectiveDateType EffectiveDate
 type EffectiveDate uint
 
 func (EffectiveDate) TypeCheck(value interface{}) bool {
-	if reflect.TypeOf(value).Kind() == reflect.Uint {
-		if s := strconv.Itoa(value.(int)); len(s) == 8 { // 20190603 = 2019/06/03
-			return true
-		}
+	if date, ok := value.(EffectiveDate); ok && date > 0 {
+		return len(strconv.Itoa(int(date))) <= 8
 	}
 	return false
 }

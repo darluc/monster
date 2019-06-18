@@ -5,14 +5,15 @@ import (
 	"reflect"
 )
 
+// MetaDrivenType is a kind of datatype which are defined by meta object, and all their values are corresponding instances.
 type MetaDrivenType struct {
 	meta.Object
 }
 
-// TypeCheck checks whether value is type of MetaDrivenType
 func (mt *MetaDrivenType) TypeCheck(value interface{}) bool {
 	inputInstance, ok := value.(meta.Instance)
 	if ok {
+		// input instance's meta object is the same with the one which driven this datatype
 		if inputInstance.MetaObject() == mt.Object {
 			return true
 		}
