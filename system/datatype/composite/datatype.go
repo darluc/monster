@@ -45,7 +45,8 @@ func (mt *MetaDrivenType) TypeCheck(value interface{}) bool {
 		if insType, ok := ins.MetaObject().(*MetaDrivenType); ok {
 			return insType == mt
 		}
-	default:
+	case *MetaDrivenType:
+		return value.(*MetaDrivenType).Object == mt.Object
 	}
 	return false
 }

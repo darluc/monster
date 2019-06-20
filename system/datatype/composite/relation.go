@@ -1,6 +1,7 @@
 package composite
 
 import (
+	"fmt"
 	"monster/meta"
 	"monster/system/implement/base"
 	"monster/system/property"
@@ -18,8 +19,8 @@ func init() {
 	relationTypes = make(map[string]*MetaDrivenType)
 }
 
-func existsType(source meta.Object, target meta.Object, fieldName string) (*MetaDrivenType, string) {
-	typeId := source.Name() + "-" + fieldName + "->" + target.Name() // @todo:low not good
+func existsType(source meta.Object, target meta.Object, fieldName string, cardinality property.TRelationCardinality) (*MetaDrivenType, string) {
+	typeId := fmt.Sprintf("R:%s-%s->%s:%d", source.Name(), fieldName, target.Name(), cardinality) //@todo[low] may not right
 	t, ok := relationTypes[typeId]
 	if ok {
 		return t, typeId
@@ -31,13 +32,13 @@ func existsType(source meta.Object, target meta.Object, fieldName string) (*Meta
 func NewRelationType(sourceObj meta.Object, targetObj meta.Object, fieldName string,
 	cardinality property.TRelationCardinality) (retType *MetaDrivenType) {
 	var typeId string
-	retType, typeId = existsType(sourceObj, targetObj, fieldName) // search for an existed relation type
+	retType, typeId = existsType(sourceObj, targetObj, fieldName, cardinality) // search for an existed relation type
 	if retType == nil {
 		relationObject := base.NewBaseObject("[relation]: " + typeId)
 		retType = NewMetaDrivenType(relationObject)
 		sourceField := base.NewBaseField(RelationSource, NewMetaDrivenType(sourceObj))
 		targetField := base.NewBaseField(RelationTarget, NewMetaDrivenType(targetObj))
-		typeField := base.NewBaseField(RelationType, GenesisType)
+		typeField := base.NewBaseField(RelationType, NewMetaDrivenType(relationObject))
 		relationObject.AddField(sourceField)
 		relationObject.AddField(targetField)
 		relationObject.AddField(typeField)
