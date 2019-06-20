@@ -9,6 +9,7 @@ import (
 const (
 	RelationSource = "source"
 	RelationTarget = "target"
+	RelationType   = "type"
 )
 
 var relationTypes map[string]*MetaDrivenType
@@ -27,29 +28,33 @@ func existsType(source meta.Object, target meta.Object, fieldName string) (*Meta
 }
 
 // NewRelationType creates a new relation type for every source & field & target combination
-func NewRelationType(sourceObj meta.Object, targetObj meta.Object, fieldName string) (retType *MetaDrivenType) {
+func NewRelationType(sourceObj meta.Object, targetObj meta.Object, fieldName string,
+	cardinality property.TRelationCardinality) (retType *MetaDrivenType) {
 	var typeId string
-	retType, typeId = existsType(sourceObj, targetObj, fieldName) // try to find out an existed relation type
+	retType, typeId = existsType(sourceObj, targetObj, fieldName) // search for an existed relation type
 	if retType == nil {
-		relationObject := base.NewBaseObject()
+		relationObject := base.NewBaseObject("[relation]: " + typeId)
+		retType = NewMetaDrivenType(relationObject)
 		sourceField := base.NewBaseField(RelationSource, NewMetaDrivenType(sourceObj))
-		throughProperty := base.NewBaseProperty(property.RelationFieldName, fieldName)
-		sourceField.AddProperty(throughProperty)
 		targetField := base.NewBaseField(RelationTarget, NewMetaDrivenType(targetObj))
+		typeField := base.NewBaseField(RelationType, GenesisType)
 		relationObject.AddField(sourceField)
 		relationObject.AddField(targetField)
-		retType = NewMetaDrivenType(relationObject)
+		relationObject.AddField(typeField)
+		// set fieldName as relation indicating name
+		relationObject.AddProperty(base.NewBaseProperty(property.RelationIndicatingName, fieldName))
+		// set relation cardinality property
+		relationObject.AddProperty(base.NewBaseProperty(property.RelationCardinality, cardinality))
 		relationTypes[typeId] = retType // remember the relation type
 	}
 	return
 }
 
-func BuildRelationship(source meta.Instance, target meta.Instance, relation *MetaDrivenType) {
+// BuildRelationship builds single relation instance between two instances with specified relation type
+func BuildRelationship(source meta.Instance, target meta.Instance, relation *MetaDrivenType) meta.Instance {
 	ins := base.NewBaseInstance(relation)
-	sourceField := relation.Field(RelationSource)
-	ins.SetFieldValue(sourceField, source)
+	ins.SetFieldValue(relation.Field(RelationSource), source)
 	ins.SetFieldValue(relation.Field(RelationTarget), target)
-
-	fieldName := sourceField.PropertyValue(property.RelationFieldName)
-	source.SetFieldValue(source.MetaObject().Field(fieldName.(string)), ins)
+	ins.SetFieldValue(relation.Field(RelationType), relation)
+	return ins
 }

@@ -32,6 +32,7 @@ type Property interface {
 type PropertyHolder interface {
 	Properties() []Property
 	AddProperty(property Property)
+	Property(definition *PropertyDefinition) Property
 	PropertyValue(definition *PropertyDefinition) interface{}
 }
 
@@ -45,6 +46,15 @@ func (base *BasePropertyHolder) Properties() []Property {
 
 func (base *BasePropertyHolder) AddProperty(property Property) {
 	base.properties = append(base.properties, property)
+}
+
+func (base *BasePropertyHolder) Property(definition *PropertyDefinition) Property {
+	for _, prop := range base.properties {
+		if prop.Definition() == definition {
+			return prop
+		}
+	}
+	return nil
 }
 
 func (base *BasePropertyHolder) PropertyValue(definition *PropertyDefinition) interface{} {

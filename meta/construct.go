@@ -1,6 +1,6 @@
 package meta
 
-type ObjectConstructor func() Object
+type ObjectConstructor func(name string) Object
 type FieldConstructor func(name string) Field
 type PropertyConstructor func() Property
 type InstanceConstructor func(object Object) Instance

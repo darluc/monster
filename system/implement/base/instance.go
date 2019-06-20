@@ -3,6 +3,7 @@ package base
 import (
 	"errors"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"monster/meta"
 )
 
@@ -17,6 +18,8 @@ func (ins *Instance) SetFieldValue(field meta.Field, value interface{}) {
 	}
 	if field.Type().TypeCheck(value) {
 		ins.fields[field] = value
+	} else {
+		logrus.Warnf("set field[%s] with improper value[%v]", field.Name(), value)
 	}
 }
 

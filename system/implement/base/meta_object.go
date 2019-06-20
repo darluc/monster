@@ -1,8 +1,8 @@
 package base
 
 import (
-	"sync"
 	"monster/meta"
+	"sync"
 )
 
 // BaseObject is a simple implementation of Object
@@ -46,8 +46,8 @@ func (obj *Object) AddField(field meta.Field) {
 	obj.fields = append(obj.fields, field)
 }
 
-func NewBaseObject() meta.Object {
-	b := &Object{}
+func NewBaseObject(name string) meta.Object {
+	b := &Object{name: name}
 	b.BasePropertyHolder = meta.NewProperties()
 	b.fields = make([]meta.Field, 0)
 	return b

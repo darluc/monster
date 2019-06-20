@@ -6,7 +6,7 @@ import (
 )
 
 type Executor interface {
-	Open() error
-	Next(ctx context.Context, instances *meta.Batch) error
-	Close() error
+	Open() (err error)
+	Next(ctx context.Context, instances *meta.Batch) (err error)
+	Close() (err error)
 }

@@ -20,6 +20,7 @@ type Instance interface {
 	SetFieldValue(field Field, value interface{})
 }
 
+// Batch is used to batch operation, especially for executors
 type Batch struct {
 	Items []Instance
 }

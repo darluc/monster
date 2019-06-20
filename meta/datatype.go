@@ -13,17 +13,6 @@ type DataType interface {
 
 type TypeChecker func(value interface{}) bool
 
-type Collector interface {
-	Values() []interface{}
-	Add(val interface{})
-	Remove(val interface{})
-}
-
-type CollectionType interface {
-	Collector
-	DataType
-}
-
 // CompositeDataType is a datatype defined by meta object
 type CompositeDataType interface {
 	Object

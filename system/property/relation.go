@@ -5,22 +5,23 @@ import (
 	"reflect"
 )
 
-type Type int
+type tRelationCoupling int
 
 const (
-	TypeMasterSlave Type = iota
-	TypeMasterReference
+	MasterSlave tRelationCoupling = iota
+	MasterReference
 )
 
-type ratio int
+type TRelationCardinality int
 
 const (
-	OneToOne ratio = iota
+	OneToOne TRelationCardinality = iota
 	OneToMany
 )
 
 var (
-	RelationRatio     = meta.NewPropertyDefinition("Relation:Ratio", reflect.TypeOf(TypeMasterSlave))
-	RelationType      = meta.NewPropertyDefinition("Relation:Type", reflect.TypeOf(OneToOne))
-	RelationFieldName = meta.NewPropertyDefinition("Relation:FieldNameOfSourceObject", reflect.TypeOf(""))
+	RelationCapacity       = meta.NewPropertyDefinition("Relation:Capacity", reflect.TypeOf(1))
+	RelationCardinality    = meta.NewPropertyDefinition("Relation:Cardinality", reflect.TypeOf(OneToOne))
+	RelationCoupling       = meta.NewPropertyDefinition("Relation:Category", reflect.TypeOf(MasterSlave))
+	RelationIndicatingName = meta.NewPropertyDefinition("Relation:IndicatingName", reflect.TypeOf(""))
 )

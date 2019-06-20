@@ -8,7 +8,7 @@ import (
 	"monster/system/datatype"
 	"monster/system/implement/base"
 	"monster/system/property"
-	"monster/util"
+	"monster/system/util"
 )
 
 const (

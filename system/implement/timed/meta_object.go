@@ -11,8 +11,8 @@ type Object struct {
 	*base.Object
 }
 
-func NewTimedObject() meta.Object {
-	obj := &Object{Object: base.NewBaseObject().(*base.Object)}
+func NewTimedObject(name string) meta.Object {
+	obj := &Object{Object: base.NewBaseObject(name).(*base.Object)}
 
 	// set object timeline property to true
 	enableTimeline := base.NewBaseProperty(property.TimelineEnabled, true)

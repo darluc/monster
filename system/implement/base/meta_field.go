@@ -1,8 +1,8 @@
 package base
 
 import (
-	"sync"
 	"monster/meta"
+	"sync"
 )
 
 type Field struct {
