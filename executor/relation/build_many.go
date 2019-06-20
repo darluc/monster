@@ -36,18 +36,24 @@ func (exec *buildToManyExec) Next(ctx context.Context, instances *meta.Batch) (e
 	errors := meta.AggregateError{}
 	for _, ins := range instances.Items {
 		// checkout capacity
-		targets := ins.FieldValue(exec.relationField).(meta.InstanceCollector)
-		if targets.Size() >= exec.capacity {
-			errors = append(errors, fmt.Errorf("cannot exceeds relation capacity %d", exec.capacity))
-			continue
+		fieldValue := ins.FieldValue(exec.relationField)
+		if fieldValue != nil && exec.capacity > 0 {
+			targets := fieldValue.(meta.InstanceCollector)
+			if targets.Size() >= exec.capacity {
+				errors = append(errors, fmt.Errorf("cannot exceeds relation capacity %d", exec.capacity))
+				continue
+			}
 		}
 		// create relation instance
 		newRelationInstance := composite.BuildRelationship(ins, exec.Target, exec.Relation)
-		// create new instance collection add newly created relation and copy all old relation instances into it
+		// copy all old relation instances
 		collection := datatype.NewInstanceHashSet()
-		for _, relationIns := range targets.Values() {
-			collection.Add(relationIns)
+		if fieldValue != nil {
+			for _, relationIns := range fieldValue.(meta.InstanceCollector).Values() {
+				collection.Add(relationIns)
+			}
 		}
+		// add newly created relation instance
 		collection.Add(newRelationInstance)
 		// set relation field value
 		ins.SetFieldValue(exec.relationField, collection)

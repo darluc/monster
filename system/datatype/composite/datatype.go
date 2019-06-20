@@ -24,27 +24,28 @@ func (mt *MetaDrivenType) TypeCheck(value interface{}) bool {
 		return ok
 	}
 
-	inputInstance, ok := value.(meta.Instance)
-	if ok {
-		// input instance's meta object is the same with the one which driven this datatype
+	switch value.(type) {
+	case meta.Instance:
+		inputInstance := value.(meta.Instance)
 		if inputInstance.MetaObject() == mt.Object {
 			return true
 		}
 		if insType, ok := inputInstance.MetaObject().(*MetaDrivenType); ok {
 			return insType == mt
 		}
-	} else if instanceCollection, ok := value.(meta.InstanceCollector); ok {
-		// also support instance collection of MetaDrivenType
+	case meta.InstanceCollector:
+		instanceCollection := value.(meta.InstanceCollector)
 		if instanceCollection.Size() == 0 {
 			return true
 		}
-		ins := instanceCollection.Values()[0].(meta.Instance)
+		ins := instanceCollection.Values()[0]
 		if ins.MetaObject() == mt.Object {
 			return true
 		}
 		if insType, ok := ins.MetaObject().(*MetaDrivenType); ok {
 			return insType == mt
 		}
+	default:
 	}
 	return false
 }

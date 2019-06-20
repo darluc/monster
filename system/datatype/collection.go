@@ -10,7 +10,7 @@ type InstanceHashSet struct {
 }
 
 func (is *InstanceHashSet) Values() []meta.Instance {
-	ret := make([]meta.Instance, is.Set.Size())
+	ret := make([]meta.Instance, 0, is.Set.Size())
 	for _, v := range is.Set.Values() {
 		ret = append(ret, v.(meta.Instance))
 	}

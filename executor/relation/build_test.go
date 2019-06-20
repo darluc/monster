@@ -28,23 +28,17 @@ func TestBuildExec_Open(t *testing.T) {
 	}
 }
 
-func prepareObjectsAndRelation() (sourceObj meta.Object, targetObj meta.Object, relationType *composite.MetaDrivenType) {
-	sourceObj = base.NewBaseObject("source")
-	targetObj = base.NewBaseObject("target")
+func TestBuildExec_OneToOne(t *testing.T) {
+	sourceObj := base.NewBaseObject("source")
+	targetObj := base.NewBaseObject("target")
 
 	nameField := base.NewBaseField("name", datatype.StringType)
-	relationType = composite.NewRelationType(sourceObj, targetObj, "parent", property.OneToOne)
+	relationType := composite.NewRelationType(sourceObj, targetObj, "parent", property.OneToOne)
 	parentField := base.NewBaseField("parent", relationType)
 
 	sourceObj.AddField(nameField)
 	sourceObj.AddField(parentField)
 	targetObj.AddField(nameField)
-
-	return
-}
-
-func TestBuildExec_OneToOne(t *testing.T) {
-	sourceObj, targetObj, relationType := prepareObjectsAndRelation()
 
 	parent := base.NewBaseInstance(targetObj)
 	parent.SetFieldValue(parent.MetaObject().Field("name"), "Steve")
@@ -87,5 +81,47 @@ func TestBuildExec_OneToOne(t *testing.T) {
 		} else {
 			t.Fail()
 		}
+	}
+}
+
+func TestBuildExec_OneToMany(t *testing.T) {
+	sourceObj := base.NewBaseObject("source")
+	targetObj := base.NewBaseObject("target")
+
+	nameField := base.NewBaseField("name", datatype.StringType)
+	relationType := composite.NewRelationType(sourceObj, targetObj, "children", property.OneToMany)
+	childrenField := base.NewBaseField("children", relationType)
+
+	sourceObj.AddField(nameField)
+	sourceObj.AddField(childrenField)
+	targetObj.AddField(nameField)
+
+	parent := base.NewBaseInstance(sourceObj)
+	parent.SetFieldValue(parent.MetaObject().Field("name"), "Steve")
+
+	childCount := 10
+	for i := 0; i < childCount; i++ {
+		child := base.NewBaseInstance(targetObj)
+		child.SetFieldValue(child.MetaObject().Field("name"), "Bob"+strconv.Itoa(i))
+
+		exec := BuildExec{Relation: relationType, Target: child}
+		exec.Open()
+		exec.Next(context.Background(), &meta.Batch{Items: []meta.Instance{parent}})
+		exec.Close()
+	}
+
+	childCollection, ok := parent.FieldValue(sourceObj.Field("children")).(meta.InstanceCollector)
+	if childCollection.Size() != childCount {
+		t.Errorf("we should got %d children, but only got %d", childCount, childCollection.Size())
+		t.FailNow()
+	}
+	if ok {
+		t.Logf("%s has %d children. And his children are: ", parent.FieldValue(nameField), childCollection.Size())
+		for _, childRelation := range childCollection.Values() {
+			child := childRelation.FieldValue(childRelation.MetaObject().Field(composite.RelationTarget)).(meta.Instance)
+			t.Logf("%s", child.FieldValue(nameField))
+		}
+	} else {
+		t.Fail()
 	}
 }
