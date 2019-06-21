@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	RelationSource = "source"
-	RelationTarget = "target"
-	RelationType   = "type"
+	LabelRelationSource = "source"
+	LabelRelationTarget = "target"
+	LabelRelationType   = "type"
 )
 
 var relationTypes map[string]*MetaDrivenType
@@ -36,9 +36,9 @@ func NewRelationType(sourceObj meta.Object, targetObj meta.Object, fieldName str
 	if retType == nil {
 		relationObject := base.NewBaseObject("[relation]: " + typeId)
 		retType = NewMetaDrivenType(relationObject)
-		sourceField := base.NewBaseField(RelationSource, NewMetaDrivenType(sourceObj))
-		targetField := base.NewBaseField(RelationTarget, NewMetaDrivenType(targetObj))
-		typeField := base.NewBaseField(RelationType, NewMetaDrivenType(relationObject))
+		sourceField := base.NewBaseField(LabelRelationSource, NewMetaDrivenType(sourceObj))
+		targetField := base.NewBaseField(LabelRelationTarget, NewMetaDrivenType(targetObj))
+		typeField := base.NewBaseField(LabelRelationType, NewMetaDrivenType(relationObject))
 		relationObject.AddField(sourceField)
 		relationObject.AddField(targetField)
 		relationObject.AddField(typeField)
@@ -54,8 +54,8 @@ func NewRelationType(sourceObj meta.Object, targetObj meta.Object, fieldName str
 // BuildRelationship builds single relation instance between two instances with specified relation type
 func BuildRelationship(source meta.Instance, target meta.Instance, relation *MetaDrivenType) meta.Instance {
 	ins := base.NewBaseInstance(relation)
-	ins.SetFieldValue(relation.Field(RelationSource), source)
-	ins.SetFieldValue(relation.Field(RelationTarget), target)
-	ins.SetFieldValue(relation.Field(RelationType), relation)
+	ins.SetFieldValue(relation.Field(LabelRelationSource), source)
+	ins.SetFieldValue(relation.Field(LabelRelationTarget), target)
+	ins.SetFieldValue(relation.Field(LabelRelationType), relation)
 	return ins
 }

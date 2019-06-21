@@ -68,8 +68,8 @@ func TestBuildExec_OneToOne(t *testing.T) {
 
 		childRelation, ok := children[randPick].FieldValue(sourceObj.Field("parent")).(meta.Instance)
 		if ok {
-			relationTarget := childRelation.FieldValue(childRelation.MetaObject().Field(composite.RelationTarget)).(meta.Instance)
-			relationSource := childRelation.FieldValue(childRelation.MetaObject().Field(composite.RelationSource)).(meta.Instance)
+			relationTarget := childRelation.FieldValue(childRelation.MetaObject().Field(composite.LabelRelationTarget)).(meta.Instance)
+			relationSource := childRelation.FieldValue(childRelation.MetaObject().Field(composite.LabelRelationSource)).(meta.Instance)
 			if relationTarget == parent && relationSource == children[randPick] {
 				t.Logf("%s's %s is %s", relationSource.FieldValue(relationSource.MetaObject().Field("name")),
 					relationType.PropertyValue(property.RelationIndicatingName),
@@ -118,7 +118,7 @@ func TestBuildExec_OneToMany(t *testing.T) {
 	if ok {
 		t.Logf("%s has %d children. And his children are: ", parent.FieldValue(nameField), childCollection.Size())
 		for _, childRelation := range childCollection.Values() {
-			child := childRelation.FieldValue(childRelation.MetaObject().Field(composite.RelationTarget)).(meta.Instance)
+			child := childRelation.FieldValue(childRelation.MetaObject().Field(composite.LabelRelationTarget)).(meta.Instance)
 			t.Logf("%s", child.FieldValue(nameField))
 		}
 	} else {

@@ -18,6 +18,6 @@ func GetCurrentDate() datatype.EffectiveDate {
 
 // RelationIndicatingField extract the meta field which holds the relation data
 func RelationIndicatingField(relationType *composite.MetaDrivenType) meta.Field {
-	sourceObject := relationType.Field(composite.RelationSource).Type().(*composite.MetaDrivenType).Object
+	sourceObject := relationType.Field(composite.LabelRelationSource).Type().(*composite.MetaDrivenType).Object
 	return sourceObject.Field(relationType.PropertyValue(property.RelationIndicatingName).(string))
 }
