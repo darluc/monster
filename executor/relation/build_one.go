@@ -11,7 +11,7 @@ import (
 
 // buildToOneExec build relation for one-to-one relationship
 type buildToOneExec struct {
-	Relation *composite.MetaDrivenType
+	Relation *composite.RelationType
 	Target   meta.Instance
 
 	garbage       *DestroyExec

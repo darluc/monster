@@ -13,8 +13,8 @@ type DataType interface {
 
 type TypeChecker func(value interface{}) bool
 
-// CompositeDataType is a datatype defined by meta object
+// CompositeDataType is a datatype defined by meta object, so it's an instance of the type meta object
 type CompositeDataType interface {
-	Object
+	Instance // datatype info stored within the instance of super datatype
 	DataType
 }

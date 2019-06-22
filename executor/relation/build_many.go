@@ -12,7 +12,7 @@ import (
 
 // buildToManyExec build one-to-many relationshi
 type buildToManyExec struct {
-	Relation *composite.MetaDrivenType
+	Relation *composite.RelationType
 	Target   meta.Instance
 
 	capacity      int

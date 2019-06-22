@@ -8,7 +8,7 @@ import (
 )
 
 type DestroyExec struct {
-	Relation *composite.MetaDrivenType
+	Relation *composite.RelationType
 }
 
 func (*DestroyExec) Open() (err error) {

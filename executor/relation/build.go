@@ -10,7 +10,7 @@ import (
 )
 
 type BuildExec struct {
-	Relation *composite.MetaDrivenType
+	Relation *composite.RelationType
 	Target   meta.Instance
 
 	underlyingExec executor.Executor // buildToOneExec / buildToManyExec

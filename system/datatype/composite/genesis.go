@@ -2,26 +2,31 @@ package composite
 
 import (
 	"monster/meta"
-	"reflect"
+	"monster/system/implement/base"
+	"monster/system/property"
 )
 
-type tObjectType struct {
-	object *meta.Object
-}
-
-func (tObjectType) TypeCheck(value interface{}) bool {
-	_, ok := value.(meta.Object)
-	return ok
-}
-
-func (tObjectType) ReflectType() reflect.Type {
-	panic("implement me")
-}
-
 var (
-	GenesisObjectType tObjectType
+	GenesisObject       meta.Object
+	GenesisInstanceType meta.CompositeDataType
 )
 
 func init() {
-	GenesisObjectType = tObjectType{new(meta.Object)}
+	GenesisObject = base.NewBaseObject("__genesis__")
+	GenesisInstanceType = NewSuperType(GenesisObject)
+}
+
+// Extends creates new datatype out of meta object, and extends base datatype
+func Extends(subtypeDefinition meta.Object, superType meta.CompositeDataType) (newDataType meta.CompositeDataType) {
+	typeDefinitionObject := base.NewBaseObject("__datatype__" + subtypeDefinition.Name() + ":" + superType.MetaObject().Name())
+	for _, fld := range superType.MetaObject().Fields() {
+		if fld.PropertyValue(property.FieldAccessibility) != property.InnerAccess {
+			typeDefinitionObject.AddField(fld)
+		}
+	}
+	for _, fld := range subtypeDefinition.Fields() {
+		typeDefinitionObject.AddField(fld)
+	}
+	typeIns := NewSuperType(typeDefinitionObject)
+	return typeIns
 }
