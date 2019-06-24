@@ -21,11 +21,21 @@ type tCompositeType struct {
 }
 
 func (t *tCompositeType) TypeCheck(value interface{}) (isValid bool) {
-	ins, isValid := value.(meta.Instance)
-	if isValid {
+	switch value.(type) {
+	case meta.Instance:
+		ins := value.(meta.Instance)
 		for _, fld := range t.typeModel.Fields() {
 			if isValid = ins.MetaObject().HasField(fld); !isValid {
 				return
+			}
+		}
+	case meta.InstanceCollector:
+		insCollection := value.(meta.InstanceCollector)
+		for _, ins := range insCollection.Values() {
+			for _, fld := range t.typeModel.Fields() {
+				if isValid = ins.MetaObject().HasField(fld); !isValid {
+					return
+				}
 			}
 		}
 	}
