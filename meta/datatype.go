@@ -17,4 +17,5 @@ type TypeChecker func(value interface{}) bool
 type CompositeDataType interface {
 	Instance // datatype info stored within the instance of super datatype
 	DataType
+	TypeModel() Object
 }

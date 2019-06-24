@@ -7,12 +7,11 @@ import (
 	"monster/system/datatype"
 	"monster/system/datatype/composite"
 	"monster/system/property"
-	"monster/system/util"
 )
 
 // buildToManyExec build one-to-many relationshi
 type buildToManyExec struct {
-	Relation *composite.RelationType
+	Relation meta.CompositeDataType
 	Target   meta.Instance
 
 	capacity      int
@@ -20,15 +19,16 @@ type buildToManyExec struct {
 }
 
 func (exec *buildToManyExec) Open() (err error) {
+	exec.relationField = composite.RelationJointField(exec.Relation)
+
 	// read out relation capacity
-	limit := exec.Relation.PropertyValue(property.RelationCapacity)
+	limit := exec.relationField.PropertyValue(property.RelationCapacity)
 	if limit != nil {
 		exec.capacity = limit.(int)
 	} else {
 		exec.capacity = 0
 	}
 
-	exec.relationField = util.RelationIndicatingField(exec.Relation)
 	return
 }
 
@@ -45,7 +45,7 @@ func (exec *buildToManyExec) Next(ctx context.Context, instances *meta.Batch) (e
 			}
 		}
 		// create relation instance
-		newRelationInstance := composite.BuildRelationship(ins, exec.Target, exec.Relation)
+		newRelationInstance := composite.BuildRelationship(exec.Relation, ins, exec.Target)
 		// copy all old relation instances
 		collection := datatype.NewInstanceHashSet()
 		if fieldValue != nil {

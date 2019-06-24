@@ -10,7 +10,7 @@ import (
 )
 
 type BuildExec struct {
-	Relation *composite.RelationType
+	Relation meta.CompositeDataType
 	Target   meta.Instance
 
 	underlyingExec executor.Executor // buildToOneExec / buildToManyExec
@@ -20,7 +20,7 @@ func (exec *BuildExec) Open() (err error) {
 	if exec.Target == nil || exec.Relation == nil {
 		return fmt.Errorf("relation target/type is nil")
 	}
-	if exec.Relation.PropertyValue(property.RelationCardinality) == property.OneToOne {
+	if composite.RelationCardinality(exec.Relation) == property.OneToOne {
 		exec.underlyingExec = &buildToOneExec{Relation: exec.Relation, Target: exec.Target}
 	} else {
 		exec.underlyingExec = &buildToManyExec{Relation: exec.Relation, Target: exec.Target}

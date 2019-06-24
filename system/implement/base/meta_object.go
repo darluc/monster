@@ -46,6 +46,16 @@ func (obj *Object) AddField(field meta.Field) {
 	obj.fields = append(obj.fields, field)
 }
 
+func (obj *Object) Clone() meta.Object {
+	clonedObj := NewBaseObject(obj.Name())
+	for _, fld := range obj.fields {
+		clonedObj.AddField(fld)
+	}
+	copiedHolder := *obj.BasePropertyHolder
+	clonedObj.(*Object).BasePropertyHolder = &copiedHolder
+	return clonedObj
+}
+
 func NewBaseObject(name string) meta.Object {
 	b := &Object{name: name}
 	b.BasePropertyHolder = meta.NewProperties()

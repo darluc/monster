@@ -6,12 +6,11 @@ import (
 	"monster/meta"
 	"monster/system/datatype/composite"
 	"monster/system/property"
-	"monster/system/util"
 )
 
 // buildToOneExec build relation for one-to-one relationship
 type buildToOneExec struct {
-	Relation *composite.RelationType
+	Relation meta.CompositeDataType
 	Target   meta.Instance
 
 	garbage       *DestroyExec
@@ -19,14 +18,14 @@ type buildToOneExec struct {
 }
 
 func (exec *buildToOneExec) Open() (err error) {
-	if exec.Relation.PropertyValue(property.RelationCardinality) != property.OneToOne {
+	if composite.RelationCardinality(exec.Relation) != property.OneToOne {
 		return fmt.Errorf("only OneToOne relation is allowed")
 	}
 
 	exec.garbage = &DestroyExec{Relation: exec.Relation}
 	err = exec.garbage.Open()
 
-	exec.relationField = util.RelationIndicatingField(exec.Relation)
+	exec.relationField = composite.RelationJointField(exec.Relation)
 	return
 }
 
@@ -45,8 +44,8 @@ func (exec *buildToOneExec) Next(ctx context.Context, instances *meta.Batch) err
 		}
 
 		// create new relation instance
-		newRelationTarget := composite.BuildRelationship(ins, exec.Target, exec.Relation)
-		ins.SetFieldValue(exec.relationField, newRelationTarget)
+		newRelationInstance := composite.BuildRelationship(exec.Relation, ins, exec.Target)
+		ins.SetFieldValue(exec.relationField, newRelationInstance)
 	}
 	if len(errors) > 0 {
 		return errors

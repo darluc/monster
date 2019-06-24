@@ -4,11 +4,10 @@ import (
 	"context"
 	"github.com/sirupsen/logrus"
 	"monster/meta"
-	"monster/system/datatype/composite"
 )
 
 type DestroyExec struct {
-	Relation *composite.RelationType
+	Relation meta.CompositeDataType
 }
 
 func (*DestroyExec) Open() (err error) {
