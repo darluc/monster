@@ -33,11 +33,9 @@ func TestBuildExec_OneToOne(t *testing.T) {
 	targetObj := base.NewBaseObject("target")
 
 	nameField := base.NewBaseField("name", datatype.StringType)
-	relationType := composite.NewRelationType(sourceObj, targetObj, "parent", property.OneToOne)
-	parentField := base.NewBaseField("parent", relationType)
+	relationType := composite.MakeRelation(sourceObj, targetObj, "parent", property.OneToOne)
 
 	sourceObj.AddField(nameField)
-	sourceObj.AddField(parentField)
 	targetObj.AddField(nameField)
 
 	parent := base.NewBaseInstance(targetObj)
@@ -89,11 +87,9 @@ func TestBuildExec_OneToMany(t *testing.T) {
 	targetObj := base.NewBaseObject("target")
 
 	nameField := base.NewBaseField("name", datatype.StringType)
-	relationType := composite.NewRelationType(sourceObj, targetObj, "children", property.OneToMany)
-	childrenField := base.NewBaseField("children", relationType)
+	relationType := composite.MakeRelation(sourceObj, targetObj, "children", property.OneToMany)
 
 	sourceObj.AddField(nameField)
-	sourceObj.AddField(childrenField)
 	targetObj.AddField(nameField)
 
 	parent := base.NewBaseInstance(sourceObj)

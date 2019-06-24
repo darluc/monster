@@ -2,7 +2,6 @@ package domain
 
 import (
 	"monster/context"
-	"monster/instance"
 	"monster/meta"
 )
 
@@ -10,5 +9,5 @@ import (
 type Domain interface {
 	context.Context
 	Objects() []meta.Object
-	Instances() []instance.Instance
+	Instances() []meta.Instance
 }

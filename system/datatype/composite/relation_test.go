@@ -14,7 +14,7 @@ func TestBuildRelationship(t *testing.T) {
 
 	objParent := base.NewBaseObject("parent")
 	objParent.AddField(nameField)
-	childRelation := NewRelationType(objParent, objChild, "children", property.OneToMany)
+	childRelation := MakeRelation(objParent, objChild, "children", property.OneToMany)
 	childrenField := base.NewBaseField("children", childRelation)
 	objParent.AddField(childrenField)
 

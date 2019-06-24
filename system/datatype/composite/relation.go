@@ -25,7 +25,7 @@ func init() {
 	relationTypeModel = base.NewBaseObject("__relation__")
 	fldCardinality = base.NewBaseField("cardinality", datatype.NumberType)
 	relationTypeModel.AddField(fldCardinality)
-	fldRelationJoint = base.NewBaseField("connector", datatype.StringType)
+	fldRelationJoint = base.NewBaseField("connector", FieldType)
 	relationTypeModel.AddField(fldRelationJoint)
 	RelationType = NewDataType(relationTypeModel)
 	relationTypes = make(map[string]meta.CompositeDataType)
@@ -37,7 +37,7 @@ func relationIdName(sourceObj meta.Object, targetObj meta.Object, fieldName stri
 	return fmt.Sprintf("%s-%s->%s@%d", sourceObj.Name(), fieldName, targetObj.Name(), cardinality)
 }
 
-func NewRelationType(sourceObj meta.Object, targetObj meta.Object, fieldName string,
+func MakeRelation(sourceObj meta.Object, targetObj meta.Object, fieldName string,
 	cardinality property.TRelationCardinality) meta.CompositeDataType {
 	relationName := relationIdName(sourceObj, targetObj, fieldName, cardinality)
 	if r, ok := relationTypes[relationName]; !ok {
@@ -52,10 +52,16 @@ func NewRelationType(sourceObj meta.Object, targetObj meta.Object, fieldName str
 		// create new relation type, and set relation's field value: cardinality & connector
 		relationType := ExtendsMetaDrivenType(relationModel, RelationType)
 		relationType.SetFieldValue(fldCardinality, cardinality)
-		relationType.SetFieldValue(fldRelationJoint, fieldName)
 		relationTypes[relationName] = relationType
+		// create joint field
+		jointField := base.NewBaseField(fieldName, relationType)
+		sourceObj.AddField(jointField)
+		relationType.SetFieldValue(fldRelationJoint, jointField)
 		return relationType
 	} else {
+		if sourceObj.Field(fieldName) == nil { // never gets here
+			sourceObj.AddField(r.FieldValue(fldRelationJoint).(meta.Field))
+		}
 		return r
 	}
 }
@@ -94,8 +100,7 @@ func RelationCardinality(relationType meta.CompositeDataType) property.TRelation
 
 // RelationCardinality returns joint field of the relation type
 func RelationJointField(relationType meta.CompositeDataType) meta.Field {
-	fieldName := relationType.FieldValue(fldRelationJoint).(string)
-	return RelationSourceTypeModel(relationType).Field(fieldName)
+	return relationType.FieldValue(fldRelationJoint).(meta.Field)
 }
 
 //endregion
