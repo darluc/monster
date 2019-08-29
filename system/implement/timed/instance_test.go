@@ -7,7 +7,7 @@ import (
 )
 
 func TestTimeInstanceSlice(t *testing.T) {
-	obj := NewTimedObject()
+	obj := NewTimedObject("hah")
 	nameField := base.NewBaseField("name", datatype.StringType)
 	obj.AddField(nameField)
 	ageField := NewTimedField("age", datatype.NumberType)

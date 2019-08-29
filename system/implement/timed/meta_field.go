@@ -9,7 +9,6 @@ import (
 const (
 	FieldEffectiveStartDate string = "effectiveStartDate"
 	FieldEffectiveEndDate   string = "effectiveEndDate"
-	FieldEffectiveEntryTime string = "effectiveEntryTime"
 )
 
 type Field struct {
